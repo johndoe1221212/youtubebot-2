@@ -2,6 +2,7 @@ import random
 import time
 import pickle
 import os
+import string  # Added import for random characters
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -13,6 +14,9 @@ SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
 
 # Updated Channel ID (New target channel ID)
 CHANNEL_ID = 'UCm-X6o81nRsXQTmqpyArkBQ'
+
+# Define a set of random characters (letters, digits, and special characters)
+RANDOM_CHARACTERS = string.ascii_letters + string.digits + "!@#$%^&*()"
 
 def get_authenticated_service():
     creds = None
@@ -89,7 +93,10 @@ def main():
             print(f"Skipping comment ID {comment_id} because it already has replies.")
             continue  # Skip this comment and move to the next one
         
-        reply_text = "I giveaway ROBUX for FREE!"
+        # Add a random character to the reply text
+        random_character = random.choice(RANDOM_CHARACTERS)  # Pick a random character
+        reply_text = f"I giveaway ROBUX for FREE! {random_character}"
+        
         print(f"Replying to comment ID: {comment_id} with text: {reply_text}")
         
         try:
