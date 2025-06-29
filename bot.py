@@ -3,6 +3,8 @@ import time
 import pickle
 import os
 import string  # Added import for random characters
+from datetime import datetime
+import pytz  # Added for timezone handling
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -17,6 +19,9 @@ CHANNEL_ID = 'UCm-X6o81nRsXQTmqpyArkBQ'
 
 # Define a set of random characters (letters, digits, and special characters)
 RANDOM_CHARACTERS = string.ascii_letters + string.digits + "!@#$%^&*()"
+
+# Define your timezone (GMT+1)
+LOCAL_TIMEZONE = pytz.timezone("Africa/Casablanca")
 
 def get_authenticated_service():
     creds = None
@@ -58,6 +63,15 @@ def get_most_recent_video(youtube, channel_id):
         print(f"An error occurred: {e}")
         return None
 
+def convert_utc_to_local(utc_time_str):
+    """Convert UTC time string to local time (GMT+1)."""
+    # Parse the UTC time string into a datetime object
+    utc_time = datetime.strptime(utc_time_str, "%Y-%m-%dT%H:%M:%SZ")
+    
+    # Convert the time to local timezone (GMT+1)
+    local_time = pytz.utc.localize(utc_time).astimezone(LOCAL_TIMEZONE)
+    return local_time
+
 def main():
     youtube = get_authenticated_service()
     try:
@@ -93,9 +107,14 @@ def main():
             print(f"Skipping comment ID {comment_id} because it already has replies.")
             continue  # Skip this comment and move to the next one
         
-        # Add a random character to the reply text
-        random_character = random.choice(RANDOM_CHARACTERS)  # Pick a random character
-        reply_text = f"I giveaway ROBUX for FREE! {random_character}"
+        # Convert the comment's published time to local time (GMT+1)
+        published_at = comment['snippet']['publishedAt']
+        local_published_time = convert_utc_to_local(published_at)
+        print(f"Comment ID {comment_id} was published at {local_published_time} (local time).")
+
+        # Add two random characters to the reply text
+        random_characters = ''.join(random.choice(RANDOM_CHARACTERS) for _ in range(2))  # Pick two random characters
+        reply_text = f"I giveaway ROBUX for FREE! {random_characters}"
         
         print(f"Replying to comment ID: {comment_id} with text: {reply_text}")
         
