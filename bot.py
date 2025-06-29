@@ -114,7 +114,7 @@ def main():
 
         # Add two random characters to the reply text
         random_characters = ''.join(random.choice(RANDOM_CHARACTERS) for _ in range(2))  # Pick two random characters
-        reply_text = f"I giveaway ROBUX for FREE! {random_characters}"
+        reply_text = f"⬆️ I give.away R0B.UX for FR.EE! {random_characters}"
         
         print(f"Replying to comment ID: {comment_id} with text: {reply_text}")
         
